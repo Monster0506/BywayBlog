@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* quill-toolbar styling */
+.ql-toolbar {
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+}
+
+.ql-container {
+  border: 1px solid #ccc;
+  min-height: 200px;
+}
+
+.ql-editor {
+  min-height: 200px;
+  padding: 12px;
+  font-size: 14px;
+}
+
+.ql-toolbar .ql-formats button {
+  background: white;
+  color: black;
+  border: none;
+  margin: 0;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.ql-toolbar .ql-formats button:hover {
+  background-color: #ddd;
+}
+
+.ql-toolbar .ql-active {
+  background-color: #ddd !important;
+}
