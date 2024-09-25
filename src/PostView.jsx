@@ -19,6 +19,7 @@ import {
 } from "firebase/firestore";
 import DOMPurify from "dompurify"; // For safely rendering HTML
 import Navbar from "./Navbar"; // Import the Navbar component
+import "react-quill/dist/quill.snow.css"; // Import Quill's snow theme CSS
 
 const PostView = () => {
   const { id } = useParams(); // Get the post ID from the URL
@@ -143,6 +144,11 @@ const PostView = () => {
   if (!post) {
     return <div>Post not found!</div>;
   }
+  const cleanHtml = DOMPurify.sanitize(post.content, {
+    ADD_TAGS: ["iframe"],
+    ADD_ATTR: ["allow", "allowfullscreen", "frameborder", "scrolling", "src"],
+    ALLOWED_URI_REGEXP: /^(?:(?:https?|ftp):|[^a-z]|[a-z+.-]+(?:[^a-z]|$))/i,
+  });
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -161,8 +167,8 @@ const PostView = () => {
 
         {/* Safely render the post content using DOMPurify */}
         <div
-          className="prose lg:prose-xl"
-          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }}
+          className="prose lg:prose-xl max-w-none ql-editor"
+          dangerouslySetInnerHTML={{ __html: cleanHtml }}
         />
 
         {/* Post Navigation */}

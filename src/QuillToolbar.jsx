@@ -77,7 +77,6 @@ export const formats = [
   "align",
   "strike",
   "script",
-  "blockquote",
   "background",
   "list",
   "bullet",
@@ -138,7 +137,6 @@ export const QuillToolbar = () => (
     <span className="ql-formats">
       <button className="ql-link" />
       <button className="ql-image" />
-      <button className="ql-video" />
     </span>
     <span className="ql-formats">
       <button className="ql-formula" />

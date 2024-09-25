@@ -4,6 +4,7 @@ import LoginPage from "./LoginPage";
 import AdminPage from "./AdminPage";
 import EditPost from "./EditPost";
 import PostView from "./PostView";
+import SignupPage from "./SignupPage";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/edit/:id" element={<EditPost />} />
         <Route path="/post/:id" element={<PostView />} />
+        <Route path="/signup" element={<SignupPage />} /> {/* Signup route */}
       </Routes>
     </Router>
   );
