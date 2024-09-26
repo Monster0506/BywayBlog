@@ -212,7 +212,7 @@ const PostView = () => {
               ></textarea>
               <button
                 onClick={handleAddComment}
-                className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+                className="bg-custom-green text-white px-4 py-2 rounded hover:bg-custom-green"
               >
                 Submit Comment
               </button>
