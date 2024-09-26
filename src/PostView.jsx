@@ -51,7 +51,7 @@ const PostView = () => {
         }
       } else {
         setCurrentUser(null);
-        setCommentAuthor(""); // Clear the author name
+        setCommentAuthor("Anonymous"); // Clear the author name
       }
     });
 
