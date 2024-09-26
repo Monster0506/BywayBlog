@@ -55,7 +55,7 @@ const EditPost = () => {
       <Navbar />
       <div className="min-h-screen bg-gray-100 flex items-center justify-center p-8">
         <div className="max-w-4xl w-full bg-white p-8 rounded-lg shadow-lg">
-          <h1 className="text-3xl font-bold mb-6 text-indigo-700 text-center">
+          <h1 className="text-3xl font-bold mb-6 text-custom-green text-center">
             Edit Post
           </h1>
 

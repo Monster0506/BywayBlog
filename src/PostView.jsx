@@ -156,7 +156,7 @@ const PostView = () => {
       <Navbar />
       <div className="custom-vertical-gradient">
         <div className="max-w-4xl mx-auto p-8 bg-white rounded-lg shadow-lg relative z-10">
-          <h1 className="text-4xl font-bold mb-4 text-indigo-700">
+          <h1 className="text-4xl font-bold mb-4 text-custom-green">
             {post.title}
           </h1>
           <p className="text-gray-600 mb-4">
@@ -175,7 +175,7 @@ const PostView = () => {
             {previousPost && (
               <a
                 href={`/post/${previousPost.id}`}
-                className="text-indigo-600 hover:text-indigo-800"
+                className="text-custom-green hover:text-custom-green"
               >
                 ← {previousPost.title}
               </a>
@@ -183,7 +183,7 @@ const PostView = () => {
             {nextPost && (
               <a
                 href={`/post/${nextPost.id}`}
-                className="text-indigo-600 hover:text-indigo-800"
+                className="text-custom-green hover:text-custom-green"
               >
                 {nextPost.title} →
               </a>

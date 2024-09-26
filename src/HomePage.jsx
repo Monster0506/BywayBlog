@@ -42,7 +42,7 @@ const HomePage = () => {
         <div className="w-full max-w-4xl mx-auto relative z-10">
           {recentPost ? (
             <div className="bg-white p-8 rounded-lg shadow-lg mb-8 transition-transform transform hover:scale-105 hover:shadow-xl">
-              <h1 className="text-3xl font-bold mb-4 text-indigo-700">
+              <h1 className="text-3xl font-bold mb-4 text-custom-green">
                 {recentPost.title}
               </h1>
               <p className="text-gray-600 text-sm mb-4">
@@ -56,7 +56,7 @@ const HomePage = () => {
               />
               <a
                 href={`/post/${recentPost.id}`}
-                className="text-indigo-500 hover:text-indigo-600 mt-4 inline-block"
+                className="text-custom-green hover:text-custom-green mt-4 inline-block"
               >
                 Read more
               </a>
@@ -67,12 +67,14 @@ const HomePage = () => {
 
           {/* Archive Section */}
           <div className="bg-white p-8 rounded-lg shadow-lg transition-transform transform hover:scale-105 hover:shadow-xl">
-            <h2 className="text-2xl font-bold mb-4 text-indigo-700">Archive</h2>
+            <h2 className="text-2xl font-bold mb-4 text-custom-green">
+              Archive
+            </h2>
             <ul className="list-disc pl-5 space-y-2">
               {archivePosts.map((post) => (
                 <li
                   key={post.id}
-                  className="transition-all hover:text-indigo-500"
+                  className="transition-all hover:text-custom-green"
                 >
                   <a
                     href={`/post/${post.id}`}

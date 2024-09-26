@@ -92,7 +92,7 @@ const AdminPage = () => {
       <div className="custom-vertical-gradient">
         <div className="min-h-screen flex items-center justify-center p-8 relative z-10 ">
           <div className="max-w-4xl w-full bg-white p-8 rounded-lg shadow-lg">
-            <h1 className="text-3xl font-bold mb-6 text-indigo-700 text-center">
+            <h1 className="text-3xl font-bold mb-6 text-custom-green text-center">
               Admin Dashboard
             </h1>
 
@@ -100,7 +100,7 @@ const AdminPage = () => {
             <PostForm onSubmit={handleAddPost} submitButtonLabel="Add Post" />
 
             {/* Display Existing Posts */}
-            <h2 className="text-2xl font-bold mb-4 text-indigo-700">Posts</h2>
+            <h2 className="text-2xl font-bold mb-4 text-custom-green">Posts</h2>
             <ul className="space-y-4">
               {posts.map((post) => (
                 <li key={post.id} className="bg-gray-100 p-4 rounded shadow-lg">
