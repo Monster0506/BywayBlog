@@ -16,3 +16,13 @@ export const truncateContent = (content) => {
   }
   return content;
 };
+
+const allowedUserIds = [
+  "2BuOYamURseUnfMXvMmBHjnJpuq1",
+  "82AhTM6YsefOKoEyPbAT5zpfPaI3",
+  "nY5OEhsG0vSUM3TwXIOEWRJrBnC2",
+];
+
+export const is_admin = (user_id) => {
+  return allowedUserIds.includes(user_id);
+};

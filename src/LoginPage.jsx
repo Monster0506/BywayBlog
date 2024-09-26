@@ -19,7 +19,7 @@ const LoginPage = () => {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate("/admin"); // Redirect to admin page on successful login
+      navigate("/"); // Redirect to admin page on successful login
     } catch (error) {
       setError("Failed to log in. Please check your credentials.");
     }
@@ -41,7 +41,7 @@ const LoginPage = () => {
       <Navbar />
       <div className="min-h-screen custom-vertical-gradient flex items-center justify-center p-8">
         <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-lg relative z-10">
-          <h1 className="text-2xl font-bold text-center mb-6">Admin Login</h1>
+          <h1 className="text-2xl font-bold text-center mb-6">Login</h1>
           {error && <p className="text-red-500 text-center mb-4">{error}</p>}
           <form onSubmit={handleLogin}>
             <div className="mb-4">

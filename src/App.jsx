@@ -6,22 +6,34 @@ import AboutPage from "./AboutPage";
 import AdminPage from "./AdminPage";
 import EditPost from "./EditPost";
 import PostView from "./PostView";
-import Footer from "./Footer"; // Import the Footer component
+import PrivateRoute from "./PrivateRoute"; // Import the PrivateRoute component
 
 function App() {
   return (
     <Router>
-      <div className="flex flex-col min-h-screen">
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          {/* <Route path="/signup" element={<SignupPage />} /> */}
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/admin" element={<AdminPage />} />
-          <Route path="/edit/:id" element={<EditPost />} />
-          <Route path="/post/:id" element={<PostView />} />
-        </Routes>
-      </div>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route
+          path="/admin"
+          element={
+            <PrivateRoute>
+              <AdminPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/edit/:id"
+          element={
+            <PrivateRoute>
+              <EditPost />
+            </PrivateRoute>
+          }
+        />
+        <Route path="/post/:id" element={<PostView />} />
+      </Routes>
     </Router>
   );
 }

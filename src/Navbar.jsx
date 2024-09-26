@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { auth } from "./firebase"; // Firebase auth
 import logo from "./assets/logo.png"; // Import the kokopelli image
+import { is_admin } from "./utils"; // Import the is_admin function
 
 const Navbar = () => {
   const [user, setUser] = useState(null); // Track logged-in user
@@ -61,12 +62,15 @@ const Navbar = () => {
             </Link>
             {user ? (
               <>
-                <Link
-                  to="/admin"
-                  className="text-gray-300 hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium"
-                >
-                  Admin
-                </Link>
+                {/* Show the Admin link only if the user is an admin */}
+                {is_admin(user.uid) && (
+                  <Link
+                    to="/admin"
+                    className="text-gray-300 hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium"
+                  >
+                    Admin
+                  </Link>
+                )}
                 <button
                   onClick={handleLogout}
                   className="text-gray-300 hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium"
