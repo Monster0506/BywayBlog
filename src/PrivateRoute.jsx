@@ -1,23 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "./firebase"; // Adjust the path based on your project structure
-import Unauthorized from "./Unauthorized"; // Import the Unauthorized component
+import { auth } from "./firebase";
+import Unauthorized from "./Unauthorized";
 import { is_admin } from "./utils";
 
-const PrivateRoute = ({ children }) => {
+const PrivateRoute = ({ children, requiresAdmin = false }) => {
   const [isAllowed, setIsAllowed] = useState(null); // `null` while checking, `true` or `false` after
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user && is_admin(user.uid)) {
-        setIsAllowed(true);
+      if (user) {
+        if (requiresAdmin) {
+          // Check if the user is an admin
+          setIsAllowed(is_admin(user.uid));
+        } else {
+          // If no admin check is required, just check if the user is authenticated
+          setIsAllowed(true);
+        }
       } else {
         setIsAllowed(false);
       }
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [requiresAdmin]);
 
   if (isAllowed === null) {
     // Render loading state while checking

@@ -1,20 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { auth } from "./firebase"; // Firebase auth
-import logo from "./assets/logo.png"; // Import the kokopelli image
-import { is_admin } from "./utils"; // Import the is_admin function
+import { auth } from "./firebase";
+import logo from "./assets/logo.png";
+import { is_admin } from "./utils";
+import { FaCog } from "react-icons/fa"; // Import the cogwheel icon
 
 const Navbar = () => {
-  const [user, setUser] = useState(null); // Track logged-in user
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
   // Monitor authentication state
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
-        setUser(user); // User is logged in
+        setUser(user);
       } else {
-        setUser(null); // No user is logged in
+        setUser(null);
       }
     });
 
@@ -47,7 +48,7 @@ const Navbar = () => {
             imagination."
           </p>
 
-          <div className="flex space-x-4 mt-4">
+          <div className="flex space-x-4 mt-4 items-center">
             <Link
               to="/"
               className="text-gray-300 hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium"
@@ -77,6 +78,20 @@ const Navbar = () => {
                 >
                   Logout
                 </button>
+
+                {/* User Settings - Cogwheel Icon */}
+                <Link
+                  to="/settings"
+                  className="flex items-center text-gray-300 px-3 py-2 rounded-md text-sm font-medium group"
+                >
+                  <FaCog
+                    className="transition-transform duration-300 group-hover:animate-spin"
+                    size={20}
+                  />
+                  <span className="ml-2 overflow-hidden whitespace-nowrap transition-all duration-300 opacity-0 transform -translate-x-4 group-hover:translate-x-0 group-hover:opacity-100">
+                    Settings
+                  </span>
+                </Link>
               </>
             ) : (
               <div className="flex space-x-4">

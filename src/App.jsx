@@ -6,8 +6,9 @@ import AboutPage from "./AboutPage";
 import AdminPage from "./AdminPage";
 import EditPost from "./EditPost";
 import PostView from "./PostView";
-import PrivateRoute from "./PrivateRoute"; // Import the PrivateRoute component
+import PrivateRoute from "./PrivateRoute";
 import Unauthorized from "./Unauthorized";
+import UserSettings from "./UserSettings";
 
 function App() {
   return (
@@ -20,7 +21,7 @@ function App() {
         <Route
           path="/admin"
           element={
-            <PrivateRoute>
+            <PrivateRoute requiresAdmin={true}>
               <AdminPage />
             </PrivateRoute>
           }
@@ -28,13 +29,23 @@ function App() {
         <Route
           path="/edit/:id"
           element={
-            <PrivateRoute>
+            <PrivateRoute requiresAdmin={true}>
               <EditPost />
             </PrivateRoute>
           }
         />
         <Route path="/post/:id" element={<PostView />} />
-        <Route path="/unauthorized" elment={<Unauthorized />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
+
+        {/* User Settings Page - No admin check */}
+        <Route
+          path="/settings"
+          element={
+            <PrivateRoute>
+              <UserSettings />
+            </PrivateRoute>
+          }
+        />
       </Routes>
     </Router>
   );
