@@ -6,7 +6,7 @@ import QuillToolbar, { modules, formats } from "./QuillToolbar"; // Import custo
 const PostForm = ({
   initialTitle = "",
   initialContent = "",
-  initialAuthor = "",
+  initialAuthor = "", // Now expecting an author prop from the parent
   onSubmit,
   submitButtonLabel = "Submit",
 }) => {
@@ -25,13 +25,13 @@ const PostForm = ({
   }, [initialContent]);
 
   useEffect(() => {
-    setAuthor(initialAuthor);
+    setAuthor(initialAuthor); // Set the author's name when the prop changes
   }, [initialAuthor]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await onSubmit({ title, content, author });
+      await onSubmit({ title, content, author }); // Use the author's name from the state
       setMessage("Post submitted successfully!");
       setTimeout(() => {
         setMessage(""); // Clear message after a while
@@ -59,33 +59,18 @@ const PostForm = ({
           />
         </div>
 
-        <div className="mb-4">
-          <label htmlFor="author" className="block text-gray-700 mb-2">
-            Author
-          </label>
-          <input
-            type="text"
-            id="author"
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded"
-            required
-          />
-        </div>
-
         <div className="mb-6">
           <label htmlFor="content" className="block text-gray-700 mb-2">
             Content
           </label>
 
-          {/* Custom Quill Toolbar */}
           <QuillToolbar />
           <ReactQuill
             theme="snow"
             value={content}
-            onChange={setContent} // Update the content state with the editor's content
-            modules={modules} // Custom modules with toolbar
-            formats={formats} // Formats to allow
+            onChange={setContent}
+            modules={modules}
+            formats={formats}
             className="bg-white mt-4"
             required
           />

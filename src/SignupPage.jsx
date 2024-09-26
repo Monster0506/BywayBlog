@@ -1,17 +1,19 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { auth } from "./firebase";
+import { auth, db } from "./firebase"; // Import Firestore
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
-} from "firebase/auth"; // Import Firebase modules
-import Navbar from "./Navbar"; // Include the Navbar
+} from "firebase/auth";
+import { setDoc, doc } from "firebase/firestore"; // Import Firestore functions
+import Navbar from "./Navbar";
 
 const SignupPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [username, setUsername] = useState(""); // New state for username
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
@@ -26,14 +28,33 @@ const SignupPage = () => {
       return;
     }
 
+    if (!username) {
+      setError("Username is required!");
+      return;
+    }
+
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password,
+      );
+      const user = userCredential.user;
+
+      // Save the user's email, username, and uid in Firestore
+      await setDoc(doc(db, "users", user.uid), {
+        username: username,
+        email: user.email,
+        uid: user.uid,
+      });
+
       setSuccess("Signup successful! Redirecting...");
       setTimeout(() => {
         navigate("/login");
       }, 2000); // Redirect to the login page after 2 seconds
     } catch (error) {
-      setError("Failed to create an account. Please try again.");
+      const errorCode = error;
+      setError(errorCode);
     }
   };
 
@@ -41,13 +62,22 @@ const SignupPage = () => {
   const handleGoogleSignUp = async () => {
     const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      // Save the user's email and uid in Firestore
+      await setDoc(doc(db, "users", user.uid), {
+        username: user.displayName || "Anonymous", // Use display name if available, or default to "Anonymous"
+        email: user.email,
+        uid: user.uid,
+      });
+
       setSuccess("Signup successful! Redirecting...");
       setTimeout(() => {
-        navigate("/admin");
+        navigate("/");
       }, 2000); // Redirect to the admin page after 2 seconds
     } catch (error) {
-      setError("Failed to sign up with Google. Please try again.");
+      setError("Could not sign up with Google.");
     }
   };
 
@@ -62,6 +92,20 @@ const SignupPage = () => {
             <p className="text-green-500 text-center mb-4">{success}</p>
           )}
           <form onSubmit={handleSignup}>
+            {/* Username Input */}
+            <div className="mb-4">
+              <label htmlFor="username" className="block text-gray-700 mb-2">
+                Username
+              </label>
+              <input
+                type="text"
+                id="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded"
+                required
+              />
+            </div>
             <div className="mb-4">
               <label htmlFor="email" className="block text-gray-700 mb-2">
                 Email

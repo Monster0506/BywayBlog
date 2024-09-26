@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { auth } from "./firebase";
+import { auth, db } from "./firebase";
 import { signOut } from "firebase/auth";
-import { db } from "./firebase";
 import { truncateContent } from "./utils";
 import {
   collection,
   addDoc,
   serverTimestamp,
   getDocs,
+  getDoc,
   deleteDoc,
   doc,
 } from "firebase/firestore";
@@ -19,11 +19,25 @@ import Footer from "./Footer";
 const AdminPage = () => {
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
+  const [userEmails, setUserEmails] = useState([]); // State to store user emails
+  const [currentUser, setCurrentUser] = useState(null); // State to store current user
+  const [username, setUsername] = useState(""); // State to store the username
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (!user) {
         navigate("/login"); // Redirect if not logged in
+      } else {
+        setCurrentUser(user);
+
+        // Fetch username from Firestore
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists()) {
+          console.log(userDoc.data());
+          setUsername(userDoc.data().username || user.email);
+        } else {
+          setUsername(user.email); // Fallback to email if username is not found
+        }
       }
     });
 
@@ -45,6 +59,22 @@ const AdminPage = () => {
     fetchPosts();
   }, []);
 
+  // Fetch user emails from Firestore
+  useEffect(() => {
+    const fetchUserEmails = async () => {
+      try {
+        const usersCollection = collection(db, "users");
+        const querySnapshot = await getDocs(usersCollection);
+        const usersList = querySnapshot.docs.map((doc) => doc.data().email);
+        setUserEmails(usersList);
+      } catch (error) {
+        console.error("Error fetching user emails: ", error);
+      }
+    };
+
+    fetchUserEmails();
+  }, []);
+
   const handleLogout = () => {
     signOut(auth)
       .then(() => {
@@ -55,14 +85,15 @@ const AdminPage = () => {
       });
   };
 
-  const handleAddPost = async ({ title, content, author }) => {
+  const handleAddPost = async ({ title, content }) => {
     try {
       await addDoc(collection(db, "posts"), {
         title,
         content,
-        author,
+        author: username, // Use the username state here
         date: serverTimestamp(),
       });
+
       // Re-fetch posts after adding
       const querySnapshot = await getDocs(collection(db, "posts"));
       const postsList = querySnapshot.docs.map((doc) => ({
@@ -83,8 +114,6 @@ const AdminPage = () => {
       console.error("Error deleting post:", error);
     }
   };
-
-  // Truncate content to a certain length
 
   return (
     <div className="min-h-screen custom-vertical-gradient">
@@ -111,7 +140,7 @@ const AdminPage = () => {
                   <div
                     className="text-gray-500 mb-4"
                     dangerouslySetInnerHTML={{
-                      __html: truncateContent(post.content), // Truncate to 200 characters
+                      __html: truncateContent(post.content),
                     }}
                   />
 
@@ -139,6 +168,18 @@ const AdminPage = () => {
             >
               Log Out
             </button>
+
+            {/* Display User Emails */}
+            <h2 className="text-2xl font-bold mb-4 text-custom-green">
+              Registered Users
+            </h2>
+            <ul className="mb-6">
+              {userEmails.map((email, index) => (
+                <li key={index} className="bg-gray-100 p-2 rounded mb-2">
+                  {email}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </div>

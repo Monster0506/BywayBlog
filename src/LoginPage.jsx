@@ -30,7 +30,7 @@ const LoginPage = () => {
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
-      navigate("/admin"); // Redirect to admin page on successful login
+      navigate("/"); // Redirect to admin page on successful login
     } catch (error) {
       setError("Failed to sign in with Google. Please try again.");
     }

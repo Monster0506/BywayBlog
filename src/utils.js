@@ -18,7 +18,6 @@ export const truncateContent = (content) => {
 };
 
 const allowedUserIds = [
-  "2BuOYamURseUnfMXvMmBHjnJpuq1",
   "82AhTM6YsefOKoEyPbAT5zpfPaI3",
   "nY5OEhsG0vSUM3TwXIOEWRJrBnC2",
 ];

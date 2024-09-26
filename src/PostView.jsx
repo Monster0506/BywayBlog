@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { auth } from "./firebase";
+import { auth, db } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
-import { db } from "./firebase";
 import { is_admin } from "./utils";
 import {
   doc,
@@ -41,11 +40,18 @@ const PostView = () => {
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setCurrentUser(user);
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists()) {
+          setCommentAuthor(userDoc.data().username || user.email);
+        } else {
+          setCommentAuthor(user.email); // Use email as fallback
+        }
       } else {
         setCurrentUser(null);
+        setCommentAuthor(""); // Clear the author name
       }
     });
 
@@ -87,6 +93,10 @@ const PostView = () => {
   };
 
   useEffect(() => {
+    fetchComments();
+  }, [id, post]);
+
+  useEffect(() => {
     const fetchAdjacentPosts = async () => {
       if (!post) return;
       try {
@@ -121,14 +131,9 @@ const PostView = () => {
     fetchAdjacentPosts();
   }, [post]);
 
-  useEffect(() => {
-    fetchComments();
-  }, [id, post]);
-
-  // Handle adding a new comment
   // Handle adding a new comment
   const handleAddComment = async () => {
-    if (!newComment || !commentAuthor) return;
+    if (!newComment) return;
 
     const commentsRef = collection(db, "posts", id, "comments");
     const newCommentData = {
@@ -153,11 +158,11 @@ const PostView = () => {
 
       // Clear the input fields
       setNewComment("");
-      setCommentAuthor("");
     } catch (error) {
       console.error("Error adding comment: ", error);
     }
   };
+
   // Handle deleting a comment
   const handleDeleteComment = async (commentId) => {
     const commentRef = doc(db, "posts", id, "comments", commentId);
@@ -271,13 +276,15 @@ const PostView = () => {
             <h2 className="text-2xl font-bold mb-4">Comments</h2>
             <div className="mt-6">
               <h3 className="text-xl font-bold mb-2">Add a Comment</h3>
-              <input
-                type="text"
-                value={commentAuthor}
-                onChange={(e) => setCommentAuthor(e.target.value)}
-                placeholder="Your Name"
-                className="block w-full p-2 mb-4 border border-gray-300 rounded"
-              />
+              {!currentUser && (
+                <input
+                  type="text"
+                  value={commentAuthor}
+                  onChange={(e) => setCommentAuthor(e.target.value)}
+                  placeholder="Your Name"
+                  className="block w-full p-2 mb-4 border border-gray-300 rounded"
+                />
+              )}
               <textarea
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
