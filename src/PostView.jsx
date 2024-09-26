@@ -87,6 +87,41 @@ const PostView = () => {
   };
 
   useEffect(() => {
+    const fetchAdjacentPosts = async () => {
+      if (!post) return;
+      try {
+        // Fetch next post
+        const nextPostQuery = query(
+          collection(db, "posts"),
+          where("date", ">", post.date),
+          orderBy("date", "asc"),
+          limit(1),
+        );
+        const nextPostSnapshot = await getDocs(nextPostQuery);
+        nextPostSnapshot.forEach((doc) =>
+          setNextPost({ id: doc.id, ...doc.data() }),
+        );
+
+        // Fetch previous post
+        const previousPostQuery = query(
+          collection(db, "posts"),
+          where("date", "<", post.date),
+          orderBy("date", "desc"),
+          limit(1),
+        );
+        const previousPostSnapshot = await getDocs(previousPostQuery);
+        previousPostSnapshot.forEach((doc) =>
+          setPreviousPost({ id: doc.id, ...doc.data() }),
+        );
+      } catch (error) {
+        console.error("Error fetching adjacent posts:", error);
+      }
+    };
+
+    fetchAdjacentPosts();
+  }, [post]);
+
+  useEffect(() => {
     fetchComments();
   }, [id, post]);
 
