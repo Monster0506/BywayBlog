@@ -7,6 +7,7 @@ import {
 } from "firebase/auth"; // Import Firebase modules
 import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
+import Footer from "./Footer";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -38,8 +39,8 @@ const LoginPage = () => {
   return (
     <div>
       <Navbar />
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-8">
-        <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-lg">
+      <div className="min-h-screen custom-vertical-gradient flex items-center justify-center p-8">
+        <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-lg relative z-10">
           <h1 className="text-2xl font-bold text-center mb-6">Admin Login</h1>
           {error && <p className="text-red-500 text-center mb-4">{error}</p>}
           <form onSubmit={handleLogin}>
@@ -87,6 +88,9 @@ const LoginPage = () => {
             </button>
           </div>
         </div>
+      </div>
+      <div>
+        <Footer />
       </div>
     </div>
   );

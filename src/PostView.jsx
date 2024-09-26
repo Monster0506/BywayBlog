@@ -19,6 +19,7 @@ import {
 } from "firebase/firestore";
 import DOMPurify from "dompurify"; // For safely rendering HTML
 import Navbar from "./Navbar"; // Import the Navbar component
+import Footer from "./Footer";
 import "react-quill/dist/quill.snow.css"; // Import Quill's snow theme CSS
 
 const PostView = () => {
@@ -151,97 +152,99 @@ const PostView = () => {
   });
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Navbar */}
+    <div className="min-h-screen custom-vertical-gradient">
       <Navbar />
+      <div className="custom-vertical-gradient">
+        <div className="max-w-4xl mx-auto p-8 bg-white rounded-lg shadow-lg relative z-10">
+          <h1 className="text-4xl font-bold mb-4 text-indigo-700">
+            {post.title}
+          </h1>
+          <p className="text-gray-600 mb-4">
+            By {post.author} on{" "}
+            {new Date(post.date.seconds * 1000).toLocaleDateString()}
+          </p>
 
-      {/* Post Content */}
-      <div className="max-w-4xl mx-auto p-8 bg-white rounded-lg shadow-lg mt-8">
-        <h1 className="text-4xl font-bold mb-4 text-indigo-700">
-          {post.title}
-        </h1>
-        <p className="text-gray-600 mb-4">
-          By {post.author} on{" "}
-          {new Date(post.date.seconds * 1000).toLocaleDateString()}
-        </p>
+          {/* Safely render the post content using DOMPurify */}
+          <div
+            className="prose lg:prose-xl max-w-none ql-editor"
+            dangerouslySetInnerHTML={{ __html: cleanHtml }}
+          />
 
-        {/* Safely render the post content using DOMPurify */}
-        <div
-          className="prose lg:prose-xl max-w-none ql-editor"
-          dangerouslySetInnerHTML={{ __html: cleanHtml }}
-        />
-
-        {/* Post Navigation */}
-        <div className="mt-6 flex justify-between">
-          {previousPost && (
-            <a
-              href={`/post/${previousPost.id}`}
-              className="text-indigo-600 hover:text-indigo-800"
-            >
-              ← {previousPost.title}
-            </a>
-          )}
-          {nextPost && (
-            <a
-              href={`/post/${nextPost.id}`}
-              className="text-indigo-600 hover:text-indigo-800"
-            >
-              {nextPost.title} →
-            </a>
-          )}
-        </div>
-
-        {/* Comments Section */}
-        <div className="mt-8">
-          <h2 className="text-2xl font-bold mb-4">Comments</h2>
-
-          <div className="mt-6">
-            <h3 className="text-xl font-bold mb-2">Add a Comment</h3>
-            <input
-              type="text"
-              value={commentAuthor}
-              onChange={(e) => setCommentAuthor(e.target.value)}
-              placeholder="Your Name"
-              className="block w-full p-2 mb-4 border border-gray-300 rounded"
-            />
-            <textarea
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Your Comment"
-              className="block w-full p-2 mb-4 border border-gray-300 rounded"
-              rows="4"
-            ></textarea>
-            <button
-              onClick={handleAddComment}
-              className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
-            >
-              Submit Comment
-            </button>
+          {/* Post Navigation */}
+          <div className="mt-6 flex justify-between">
+            {previousPost && (
+              <a
+                href={`/post/${previousPost.id}`}
+                className="text-indigo-600 hover:text-indigo-800"
+              >
+                ← {previousPost.title}
+              </a>
+            )}
+            {nextPost && (
+              <a
+                href={`/post/${nextPost.id}`}
+                className="text-indigo-600 hover:text-indigo-800"
+              >
+                {nextPost.title} →
+              </a>
+            )}
           </div>
-        </div>
-        {/* Display comments */}
-        {/* Display comments */}
-        <ul className="space-y-4">
-          {comments.map((comment) => (
-            <li key={comment.id} className="bg-gray-100 p-4 rounded-lg">
-              <p className="text-gray-800 mb-2">
-                <strong>{comment.author}</strong> on{" "}
-                {new Date(comment.date.seconds * 1000).toLocaleDateString()}
-              </p>
-              <p>{comment.content}</p>
 
-              {/* Show delete button if user is logged in */}
-              {currentUser && (
-                <button
-                  onClick={() => handleDeleteComment(comment.id)}
-                  className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
-                >
-                  Delete
-                </button>
-              )}
-            </li>
-          ))}
-        </ul>
+          {/* Comments Section */}
+          <div className="mt-8">
+            <h2 className="text-2xl font-bold mb-4">Comments</h2>
+
+            <div className="mt-6">
+              <h3 className="text-xl font-bold mb-2">Add a Comment</h3>
+              <input
+                type="text"
+                value={commentAuthor}
+                onChange={(e) => setCommentAuthor(e.target.value)}
+                placeholder="Your Name"
+                className="block w-full p-2 mb-4 border border-gray-300 rounded"
+              />
+              <textarea
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                placeholder="Your Comment"
+                className="block w-full p-2 mb-4 border border-gray-300 rounded"
+                rows="4"
+              ></textarea>
+              <button
+                onClick={handleAddComment}
+                className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+              >
+                Submit Comment
+              </button>
+            </div>
+          </div>
+          {/* Display comments */}
+          {/* Display comments */}
+          <ul className="space-y-4">
+            {comments.map((comment) => (
+              <li key={comment.id} className="bg-gray-100 p-4 rounded-lg">
+                <p className="text-gray-800 mb-2">
+                  <strong>{comment.author}</strong> on{" "}
+                  {new Date(comment.date.seconds * 1000).toLocaleDateString()}
+                </p>
+                <p>{comment.content}</p>
+
+                {/* Show delete button if user is logged in */}
+                {currentUser && (
+                  <button
+                    onClick={() => handleDeleteComment(comment.id)}
+                    className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
+                  >
+                    Delete
+                  </button>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+      <div>
+        <Footer />
       </div>
     </div>
   );

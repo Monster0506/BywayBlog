@@ -3,6 +3,7 @@ import { db } from "./firebase";
 import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
 import { formatDate, truncateContent, contentLimit } from "./utils";
 import Navbar from "./Navbar";
+import Footer from "./Footer";
 
 const HomePage = () => {
   const [recentPost, setRecentPost] = useState(null);
@@ -35,10 +36,10 @@ const HomePage = () => {
   }, []);
 
   return (
-    <div>
+    <div className="custom-vertical-gradient">
       <Navbar />
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-8 font-mono">
-        <div className="w-full max-w-4xl mx-auto">
+      <div className="custom-vertical-gradient min-h-screen flex items-center justify-center p-8 font-mono ">
+        <div className="w-full max-w-4xl mx-auto relative z-10">
           {recentPost ? (
             <div className="bg-white p-8 rounded-lg shadow-lg mb-8 transition-transform transform hover:scale-105 hover:shadow-xl">
               <h1 className="text-3xl font-bold mb-4 text-indigo-700">
@@ -85,6 +86,9 @@ const HomePage = () => {
               ))}
             </ul>
           </div>
+        </div>
+        <div className="absolute bottom-0 left-0 right-0 z-0 h-40">
+          <Footer />
         </div>
       </div>
     </div>

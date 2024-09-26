@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 /* quill-toolbar styling */
+.custom-vertical-gradient {
+  background: rgb(255, 255, 255);
+  background: linear-gradient(0deg, rgba(255, 255, 255, 1) 0%, #636b2f 90%);
+}
+
+.green-text {
+  color: #636b2f;
+}
 
 .ql-toolbar {
   background-color: #f1f1f1;
