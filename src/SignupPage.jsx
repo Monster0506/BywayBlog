@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth } from "./firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth"; // Import Firebase modules
 import Navbar from "./Navbar"; // Include the Navbar
 
 const SignupPage = () => {
@@ -33,13 +37,24 @@ const SignupPage = () => {
     }
   };
 
+  // Handle Google Sign-Up
+  const handleGoogleSignUp = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+      setSuccess("Signup successful! Redirecting...");
+      setTimeout(() => {
+        navigate("/admin");
+      }, 2000); // Redirect to the admin page after 2 seconds
+    } catch (error) {
+      setError("Failed to sign up with Google. Please try again.");
+    }
+  };
+
   return (
     <div>
       <Navbar />
       <div className="min-h-screen bg-gray-100 flex flex-col items-center p-8">
-        {/* Navbar */}
-
-        {/* Signup Form */}
         <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg mt-8">
           <h1 className="text-2xl font-bold text-center mb-6">Sign Up</h1>
           {error && <p className="text-red-500 text-center mb-4">{error}</p>}
@@ -96,6 +111,16 @@ const SignupPage = () => {
               Sign Up
             </button>
           </form>
+
+          {/* Google Sign-Up Button */}
+          <div className="mt-4">
+            <button
+              onClick={handleGoogleSignUp}
+              className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600"
+            >
+              Sign Up with Google
+            </button>
+          </div>
         </div>
       </div>
     </div>

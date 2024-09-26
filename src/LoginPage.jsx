@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { auth } from "./firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth"; // Import Firebase modules
 import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 
@@ -17,6 +21,17 @@ const LoginPage = () => {
       navigate("/admin"); // Redirect to admin page on successful login
     } catch (error) {
       setError("Failed to log in. Please check your credentials.");
+    }
+  };
+
+  // Handle Google Sign-In
+  const handleGoogleSignIn = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+      navigate("/admin"); // Redirect to admin page on successful login
+    } catch (error) {
+      setError("Failed to sign in with Google. Please try again.");
     }
   };
 
@@ -61,6 +76,16 @@ const LoginPage = () => {
               Log In
             </button>
           </form>
+
+          {/* Google Sign-In Button */}
+          <div className="mt-4">
+            <button
+              onClick={handleGoogleSignIn}
+              className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600"
+            >
+              Sign In with Google
+            </button>
+          </div>
         </div>
       </div>
     </div>
