@@ -53,14 +53,12 @@ const HomePage = () => {
                   __html: truncateContent(recentPost.content),
                 }}
               />
-              {recentPost.content.length > contentLimit && (
-                <a
-                  href={`/post/${recentPost.id}`}
-                  className="text-indigo-500 hover:text-indigo-600 mt-4 inline-block"
-                >
-                  Read more
-                </a>
-              )}
+              <a
+                href={`/post/${recentPost.id}`}
+                className="text-indigo-500 hover:text-indigo-600 mt-4 inline-block"
+              >
+                Read more
+              </a>
             </div>
           ) : (
             <p className="text-center text-gray-500">Loading recent post...</p>
