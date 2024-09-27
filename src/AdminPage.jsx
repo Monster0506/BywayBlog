@@ -105,7 +105,7 @@ const AdminPage = () => {
       console.error("Error adding post: ", error);
     }
   };
-
+  // delete posts
   const handleDeletePost = async (id) => {
     try {
       await deleteDoc(doc(db, "posts", id));
