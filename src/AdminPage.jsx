@@ -33,7 +33,6 @@ const AdminPage = () => {
         // Fetch username from Firestore
         const userDoc = await getDoc(doc(db, "users", user.uid));
         if (userDoc.exists()) {
-          console.log(userDoc.data());
           setUsername(userDoc.data().username || user.email);
         } else {
           setUsername(user.email); // Fallback to email if username is not found
@@ -85,12 +84,13 @@ const AdminPage = () => {
       });
   };
 
-  const handleAddPost = async ({ title, content }) => {
+  const handleAddPost = async ({ title, content, draft }) => {
     try {
       await addDoc(collection(db, "posts"), {
         title,
         content,
         author: username, // Use the username state here
+        draft, // Save draft status in Firestore
         date: serverTimestamp(),
       });
 
@@ -105,6 +105,7 @@ const AdminPage = () => {
       console.error("Error adding post: ", error);
     }
   };
+
   // delete posts
   const handleDeletePost = async (id) => {
     try {
@@ -135,6 +136,9 @@ const AdminPage = () => {
                 <li key={post.id} className="bg-gray-100 p-4 rounded shadow-lg">
                   <h3 className="text-xl font-semibold">{post.title}</h3>
                   <p className="text-gray-700 mb-2">{post.author}</p>
+                  <p className="text-gray-500 mb-2">
+                    {post.draft ? "Draft" : "Published"}
+                  </p>
 
                   {/* Display truncated HTML content */}
                   <div

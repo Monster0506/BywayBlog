@@ -7,12 +7,14 @@ const PostForm = ({
   initialTitle = "",
   initialContent = "",
   initialAuthor = "", // Now expecting an author prop from the parent
+  initialDraft = false, // Add initialDraft prop to handle draft state
   onSubmit,
   submitButtonLabel = "Submit",
 }) => {
   const [title, setTitle] = useState(initialTitle);
   const [content, setContent] = useState(initialContent);
   const [author, setAuthor] = useState(initialAuthor);
+  const [draft, setDraft] = useState(initialDraft); // State to track the draft checkbox
   const [message, setMessage] = useState("");
 
   // Update state when props change
@@ -28,10 +30,14 @@ const PostForm = ({
     setAuthor(initialAuthor); // Set the author's name when the prop changes
   }, [initialAuthor]);
 
+  useEffect(() => {
+    setDraft(initialDraft);
+  }, [initialDraft]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await onSubmit({ title, content, author }); // Use the author's name from the state
+      await onSubmit({ title, content, author, draft }); // Include draft in the submission data
       setMessage("Post submitted successfully!");
       setTimeout(() => {
         setMessage(""); // Clear message after a while
@@ -74,6 +80,20 @@ const PostForm = ({
             className="bg-white mt-4"
             required
           />
+        </div>
+
+        <div className="mb-4">
+          <label htmlFor="draft" className="block text-gray-700 mb-2">
+            Save as Draft
+          </label>
+          <input
+            type="checkbox"
+            id="draft"
+            checked={draft}
+            onChange={(e) => setDraft(e.target.checked)}
+            className="mr-2"
+          />
+          <span>Draft</span>
         </div>
 
         <button

@@ -11,6 +11,7 @@ const EditPost = () => {
   const [initialTitle, setInitialTitle] = useState("");
   const [initialContent, setInitialContent] = useState("");
   const [initialAuthor, setInitialAuthor] = useState("");
+  const [initialDraft, setInitialDraft] = useState(false); // Add state for initial draft
   const [message, setMessage] = useState("");
 
   useEffect(() => {
@@ -23,6 +24,7 @@ const EditPost = () => {
         setInitialTitle(post.title);
         setInitialContent(post.content);
         setInitialAuthor(post.author);
+        setInitialDraft(post.draft || false); // Set initial draft state
       } else {
         console.log("No such document!");
       }
@@ -32,13 +34,14 @@ const EditPost = () => {
   }, [id]);
 
   // Function to handle updating the post in Firestore
-  const handleUpdatePost = async ({ title, content, author }) => {
+  const handleUpdatePost = async ({ title, content, author, draft }) => {
     try {
       const docRef = doc(db, "posts", id);
       await updateDoc(docRef, {
         title,
         content,
         author,
+        draft, // Update draft status in Firestore
       });
       setMessage("Post updated successfully!");
       setTimeout(() => {
@@ -64,6 +67,7 @@ const EditPost = () => {
             initialTitle={initialTitle}
             initialContent={initialContent}
             initialAuthor={initialAuthor}
+            initialDraft={initialDraft} // Pass initial draft state
             onSubmit={handleUpdatePost}
             submitButtonLabel="Update Post"
           />
