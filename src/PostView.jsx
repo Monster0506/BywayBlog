@@ -64,7 +64,13 @@ const PostView = () => {
         const docRef = doc(db, "posts", id);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-          setPost(docSnap.data());
+          const postData = docSnap.data();
+          // Check if the post is marked as a draft
+          if (!postData.draft) {
+            setPost(postData);
+          } else {
+            console.log("This post is marked as a draft.");
+          }
         } else {
           console.log("No such document!");
         }
@@ -100,10 +106,10 @@ const PostView = () => {
     const fetchAdjacentPosts = async () => {
       if (!post) return;
       try {
-        // Fetch next post
         const nextPostQuery = query(
           collection(db, "posts"),
           where("date", ">", post.date),
+          where("draft", "==", false), // Exclude drafts
           orderBy("date", "asc"),
           limit(1),
         );
@@ -112,10 +118,10 @@ const PostView = () => {
           setNextPost({ id: doc.id, ...doc.data() }),
         );
 
-        // Fetch previous post
         const previousPostQuery = query(
           collection(db, "posts"),
           where("date", "<", post.date),
+          where("draft", "==", false), // Exclude drafts
           orderBy("date", "desc"),
           limit(1),
         );
@@ -143,20 +149,16 @@ const PostView = () => {
     };
 
     try {
-      // Add the new comment to Firestore
       const docRef = await addDoc(commentsRef, newCommentData);
 
-      // Create a new comment object with the current timestamp for local state update
       const newCommentWithId = {
         id: docRef.id,
         ...newCommentData,
         date: { seconds: Date.now() / 1000 }, // Mock the date for immediate rendering
       };
 
-      // Update the comments list with the new comment
       setComments((prevComments) => [...prevComments, newCommentWithId]);
 
-      // Clear the input fields
       setNewComment("");
     } catch (error) {
       console.error("Error adding comment: ", error);
