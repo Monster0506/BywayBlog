@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { db } from "./firebase";
 import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
-import { formatDate, truncateContent, contentLimit } from "./utils";
+import { formatDate, truncateContent } from "./utils";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 
@@ -18,12 +18,15 @@ const HomePage = () => {
       const posts = [];
       querySnapshot.forEach((doc) => {
         const data = doc.data();
-        const post = {
-          ...data,
-          date: data.date.toDate(), // Convert Firestore timestamp to JS Date
-          id: doc.id,
-        };
-        posts.push(post);
+        // Only include posts that are not drafts
+        if (!data.draft) {
+          const post = {
+            ...data,
+            date: data.date.toDate(), // Convert Firestore timestamp to JS Date
+            id: doc.id,
+          };
+          posts.push(post);
+        }
       });
 
       // Set the three most recent posts
