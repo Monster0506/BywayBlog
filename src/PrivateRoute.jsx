@@ -11,10 +11,8 @@ const PrivateRoute = ({ children, requiresAdmin = false }) => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         if (requiresAdmin) {
-          // Check if the user is an admin
           setIsAllowed(is_admin(user.uid));
         } else {
-          // If no admin check is required, just check if the user is authenticated
           setIsAllowed(true);
         }
       } else {
