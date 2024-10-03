@@ -47,11 +47,11 @@ const PostView = () => {
         if (userDoc.exists()) {
           setCommentAuthor(userDoc.data().username || user.email);
         } else {
-          setCommentAuthor(user.email); // Use email as fallback
+          setCommentAuthor(user.email);
         }
       } else {
         setCurrentUser(null);
-        setCommentAuthor("Anonymous"); // Clear the author name
+        setCommentAuthor("Anonymous");
       }
     });
 
@@ -65,7 +65,6 @@ const PostView = () => {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           const postData = docSnap.data();
-          // Check if the post is marked as a draft
           if (!postData.draft) {
             setPost(postData);
           } else {
@@ -84,7 +83,6 @@ const PostView = () => {
     fetchPost();
   }, [id]);
 
-  // Fetch comments function
   const fetchComments = async () => {
     if (!post) return;
     const commentsRef = collection(db, "posts", id, "comments");
@@ -109,7 +107,7 @@ const PostView = () => {
         const nextPostQuery = query(
           collection(db, "posts"),
           where("date", ">", post.date),
-          where("draft", "==", false), // Exclude drafts
+          where("draft", "==", false),
           orderBy("date", "asc"),
           limit(1),
         );
@@ -121,7 +119,7 @@ const PostView = () => {
         const previousPostQuery = query(
           collection(db, "posts"),
           where("date", "<", post.date),
-          where("draft", "==", false), // Exclude drafts
+          where("draft", "==", false),
           orderBy("date", "desc"),
           limit(1),
         );
@@ -137,7 +135,6 @@ const PostView = () => {
     fetchAdjacentPosts();
   }, [post]);
 
-  // Handle adding a new comment
   const handleAddComment = async () => {
     if (!newComment) return;
 
@@ -154,25 +151,22 @@ const PostView = () => {
       const newCommentWithId = {
         id: docRef.id,
         ...newCommentData,
-        date: { seconds: Date.now() / 1000 }, // Mock the date for immediate rendering
+        date: { seconds: Date.now() / 1000 },
       };
 
       setComments((prevComments) => [...prevComments, newCommentWithId]);
-
       setNewComment("");
     } catch (error) {
       console.error("Error adding comment: ", error);
     }
   };
 
-  // Handle deleting a comment
   const handleDeleteComment = async (commentId) => {
     const commentRef = doc(db, "posts", id, "comments", commentId);
     await deleteDoc(commentRef);
-    setComments(comments.filter((comment) => comment.id !== commentId)); // Remove comment from UI
+    setComments(comments.filter((comment) => comment.id !== commentId));
   };
 
-  // Sharing logic
   const postUrl = window.location.href;
 
   const handleCopyUrl = () => {
@@ -185,11 +179,19 @@ const PostView = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        Loading...
+      </div>
+    );
   }
 
   if (!post) {
-    return <div>Post not found!</div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        Post not found!
+      </div>
+    );
   }
 
   const cleanHtml = DOMPurify.sanitize(post.content, {
@@ -201,27 +203,34 @@ const PostView = () => {
   return (
     <div className="min-h-screen custom-vertical-gradient">
       <Navbar />
+
+      {/* Main content container */}
       <div className="custom-vertical-gradient">
         <div className="max-w-4xl mx-auto p-8 bg-white rounded-lg shadow-lg relative z-10">
-          <h1 className="text-4xl font-bold mb-4 text-custom-green">
-            {post.title}
-          </h1>
-          <p className="text-gray-600 mb-4">
-            By {post.author} on{" "}
-            {new Date(post.date.seconds * 1000).toLocaleDateString()}
-          </p>
-          {/* Safely render the post content */}
-          <div
-            className="prose lg:prose-xl max-w-none ql-editor"
+          {/* Post Header */}
+          <header className="mb-8">
+            <h1 className="text-4xl font-bold mb-4 text-custom-green">
+              {post.title}
+            </h1>
+            <p className="text-gray-600">
+              By {post.author} on{" "}
+              {new Date(post.date.seconds * 1000).toLocaleDateString()}
+            </p>
+          </header>
+
+          {/* Post Content */}
+          <section
+            className="prose lg:prose-xl max-w-none ql-editor mb-8"
             dangerouslySetInnerHTML={{ __html: cleanHtml }}
           />
-          {/* Share Buttons */}
-          <div className="mt-6 flex space-x-4">
+
+          {/* Social Sharing Section */}
+          <section className="mt-6 mb-8 flex space-x-4">
             <a
               href={`https://www.facebook.com/sharer/sharer.php?u=${postUrl}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-600 hover:text-blue-800"
+              className="text-blue-600 hover:text-blue-800 transition"
             >
               <FaFacebook size={24} />
             </a>
@@ -229,7 +238,7 @@ const PostView = () => {
               href={`https://twitter.com/intent/tweet?url=${postUrl}&text=${post.title}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-400 hover:text-blue-600"
+              className="text-blue-400 hover:text-blue-600 transition"
             >
               <FaTwitter size={24} />
             </a>
@@ -237,29 +246,30 @@ const PostView = () => {
               href={`https://www.linkedin.com/sharing/share-offsite/?url=${postUrl}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-700 hover:text-blue-900"
+              className="text-blue-700 hover:text-blue-900 transition"
             >
               <FaLinkedin size={24} />
             </a>
             <button
               onClick={handleCopyUrl}
-              className="text-gray-700 hover:text-gray-900"
+              className="text-gray-700 hover:text-gray-900 transition"
             >
               <FaCopy size={24} />
             </button>
             <button
               onClick={handleEmailShare}
-              className="text-red-600 hover:text-red-800"
+              className="text-red-600 hover:text-red-800 transition"
             >
               <FaEnvelope size={24} />
             </button>
-          </div>
-          {/* Post Navigation */}
-          <div className="mt-6 flex justify-between">
+          </section>
+
+          {/* Navigation Section */}
+          <nav className="mt-8 flex justify-between">
             {previousPost && (
               <a
                 href={`/post/${previousPost.id}`}
-                className="text-custom-green hover:text-custom-green"
+                className="text-custom-green hover:text-custom-green-dark transition"
               >
                 ← {previousPost.title}
               </a>
@@ -267,15 +277,18 @@ const PostView = () => {
             {nextPost && (
               <a
                 href={`/post/${nextPost.id}`}
-                className="text-custom-green hover:text-custom-green"
+                className="text-custom-green hover:text-custom-green-dark transition"
               >
                 {nextPost.title} →
               </a>
             )}
-          </div>
+          </nav>
+
           {/* Comments Section */}
-          <div className="mt-8">
+          <section className="mt-12">
             <h2 className="text-2xl font-bold mb-4">Comments</h2>
+
+            {/* Add Comment Form */}
             <div className="mt-6">
               <h3 className="text-xl font-bold mb-2">Add a Comment</h3>
               {!currentUser && (
@@ -296,36 +309,39 @@ const PostView = () => {
               ></textarea>
               <button
                 onClick={handleAddComment}
-                className="bg-custom-green text-white px-4 py-2 rounded hover:bg-custom-green"
+                className="bg-custom-green text-white px-4 py-2 rounded hover:bg-custom-green-dark transition"
               >
                 Submit Comment
               </button>
             </div>
-          </div>
-          {/* Display comments */}
-          <ul className="space-y-4">
-            {comments.map((comment) => (
-              <li key={comment.id} className="bg-gray-100 p-4 rounded-lg">
-                <p className="text-gray-800 mb-2">
-                  <strong>{comment.author}</strong> on{" "}
-                  {new Date(comment.date.seconds * 1000).toLocaleDateString()}
-                </p>
-                <p>{comment.content}</p>
 
-                {/* Show delete button only if the current user is an admin */}
-                {currentUser && is_admin(currentUser.uid) && (
-                  <button
-                    onClick={() => handleDeleteComment(comment.id)}
-                    className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
-                  >
-                    Delete
-                  </button>
-                )}
-              </li>
-            ))}
-          </ul>{" "}
+            {/* Display Comments */}
+            <ul className="space-y-4 mt-6">
+              {comments.map((comment) => (
+                <li
+                  key={comment.id}
+                  className="bg-gray-100 p-4 rounded-lg shadow"
+                >
+                  <p className="text-gray-800 mb-2">
+                    <strong>{comment.author}</strong> on{" "}
+                    {new Date(comment.date.seconds * 1000).toLocaleDateString()}
+                  </p>
+                  <p>{comment.content}</p>
+                  {currentUser && is_admin(currentUser.uid) && (
+                    <button
+                      onClick={() => handleDeleteComment(comment.id)}
+                      className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition mt-2"
+                    >
+                      Delete
+                    </button>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </section>
         </div>
       </div>
+
       <Footer />
     </div>
   );
